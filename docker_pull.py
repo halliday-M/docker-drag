@@ -88,6 +88,8 @@ layers = resp.json()['layers']
 
 # Create tmp folder that will hold the image
 imgdir = 'tmp_{}_{}'.format(img, tag.replace(':', '@'))
+if os.path.exists(imgdir):
+	shutil.rmtree(imgdir)
 os.mkdir(imgdir)
 print('Creating image structure in: ' + imgdir)
 
@@ -193,11 +195,11 @@ file = open(imgdir + '/repositories', 'w')
 file.write(json.dumps(content))
 file.close()
 
-# Create image tar and clean tmp folder
-docker_tar = repo.replace('/', '_') + '_' + img + '.tar'
+# Create image tar.gz and clean tmp folder
+docker_tar = repo.replace('/', '_') + '_' + img + '_' + tag +'.tar.gz'
 sys.stdout.write("Creating archive...")
 sys.stdout.flush()
-tar = tarfile.open(docker_tar, "w")
+tar = tarfile.open(docker_tar, "w:gz")
 tar.add(imgdir, arcname=os.path.sep)
 tar.close()
 shutil.rmtree(imgdir)
